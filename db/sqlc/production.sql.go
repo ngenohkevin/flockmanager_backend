@@ -18,15 +18,15 @@ INSERT INTO production (
     hatching_eggs
 ) VALUES (
              $1, $2, $3, $4, $5, $6
-) RETURNING production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs, kuroiler_id, rainbowrooster_id, broiler_id, layers_id
+         ) RETURNING id, production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs
 `
 
 type CreateProductionParams struct {
 	Eggs         sql.NullInt64 `json:"eggs"`
-	Dirty        sql.NullInt32 `json:"dirty"`
-	WrongShape   sql.NullInt32 `json:"wrongShape"`
-	WeakShell    sql.NullInt32 `json:"weakShell"`
-	Damaged      sql.NullInt32 `json:"damaged"`
+	Dirty        sql.NullInt64 `json:"dirty"`
+	WrongShape   sql.NullInt64 `json:"wrongShape"`
+	WeakShell    sql.NullInt64 `json:"weakShell"`
+	Damaged      sql.NullInt64 `json:"damaged"`
 	HatchingEggs sql.NullInt64 `json:"hatchingEggs"`
 }
 
@@ -41,6 +41,7 @@ func (q *Queries) CreateProduction(ctx context.Context, arg CreateProductionPara
 	)
 	var i Production
 	err := row.Scan(
+		&i.ID,
 		&i.ProductionID,
 		&i.CreatedAt,
 		&i.Eggs,
@@ -49,23 +50,20 @@ func (q *Queries) CreateProduction(ctx context.Context, arg CreateProductionPara
 		&i.WeakShell,
 		&i.Damaged,
 		&i.HatchingEggs,
-		&i.KuroilerID,
-		&i.RainbowroosterID,
-		&i.BroilerID,
-		&i.LayersID,
 	)
 	return i, err
 }
 
 const getProduction = `-- name: GetProduction :one
-SELECT production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs, kuroiler_id, rainbowrooster_id, broiler_id, layers_id FROM production
-WHERE production_id = $1 LIMIT 1
+SELECT id, production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs FROM production
+WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetProduction(ctx context.Context, productionID sql.NullInt64) (Production, error) {
-	row := q.queryRow(ctx, q.getProductionStmt, getProduction, productionID)
+func (q *Queries) GetProduction(ctx context.Context, id int64) (Production, error) {
+	row := q.queryRow(ctx, q.getProductionStmt, getProduction, id)
 	var i Production
 	err := row.Scan(
+		&i.ID,
 		&i.ProductionID,
 		&i.CreatedAt,
 		&i.Eggs,
@@ -74,28 +72,26 @@ func (q *Queries) GetProduction(ctx context.Context, productionID sql.NullInt64)
 		&i.WeakShell,
 		&i.Damaged,
 		&i.HatchingEggs,
-		&i.KuroilerID,
-		&i.RainbowroosterID,
-		&i.BroilerID,
-		&i.LayersID,
 	)
 	return i, err
 }
 
 const listProduction = `-- name: ListProduction :many
-SELECT production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs, kuroiler_id, rainbowrooster_id, broiler_id, layers_id FROM production
-ORDER BY production_id
-LIMIT $1
-OFFSET $2
+SELECT id, production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs FROM production
+WHERE production_id = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3
 `
 
 type ListProductionParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
+	ProductionID int64 `json:"productionID"`
+	Limit        int32 `json:"limit"`
+	Offset       int32 `json:"offset"`
 }
 
 func (q *Queries) ListProduction(ctx context.Context, arg ListProductionParams) ([]Production, error) {
-	rows, err := q.query(ctx, q.listProductionStmt, listProduction, arg.Limit, arg.Offset)
+	rows, err := q.query(ctx, q.listProductionStmt, listProduction, arg.ProductionID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +100,7 @@ func (q *Queries) ListProduction(ctx context.Context, arg ListProductionParams) 
 	for rows.Next() {
 		var i Production
 		if err := rows.Scan(
+			&i.ID,
 			&i.ProductionID,
 			&i.CreatedAt,
 			&i.Eggs,
@@ -112,10 +109,6 @@ func (q *Queries) ListProduction(ctx context.Context, arg ListProductionParams) 
 			&i.WeakShell,
 			&i.Damaged,
 			&i.HatchingEggs,
-			&i.KuroilerID,
-			&i.RainbowroosterID,
-			&i.BroilerID,
-			&i.LayersID,
 		); err != nil {
 			return nil, err
 		}
@@ -128,54 +121,4 @@ func (q *Queries) ListProduction(ctx context.Context, arg ListProductionParams) 
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateProduction = `-- name: UpdateProduction :one
-UPDATE production
-SET
-     eggs = $1,
-     dirty = $2,
-     wrong_shape = $3,
-     weak_shell = $4,
-     damaged = $5,
-     hatching_eggs = $6
-
-WHERE production_id = $1
-RETURNING production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs, kuroiler_id, rainbowrooster_id, broiler_id, layers_id
-`
-
-type UpdateProductionParams struct {
-	Eggs         sql.NullInt64 `json:"eggs"`
-	Dirty        sql.NullInt32 `json:"dirty"`
-	WrongShape   sql.NullInt32 `json:"wrongShape"`
-	WeakShell    sql.NullInt32 `json:"weakShell"`
-	Damaged      sql.NullInt32 `json:"damaged"`
-	HatchingEggs sql.NullInt64 `json:"hatchingEggs"`
-}
-
-func (q *Queries) UpdateProduction(ctx context.Context, arg UpdateProductionParams) (Production, error) {
-	row := q.queryRow(ctx, q.updateProductionStmt, updateProduction,
-		arg.Eggs,
-		arg.Dirty,
-		arg.WrongShape,
-		arg.WeakShell,
-		arg.Damaged,
-		arg.HatchingEggs,
-	)
-	var i Production
-	err := row.Scan(
-		&i.ProductionID,
-		&i.CreatedAt,
-		&i.Eggs,
-		&i.Dirty,
-		&i.WrongShape,
-		&i.WeakShell,
-		&i.Damaged,
-		&i.HatchingEggs,
-		&i.KuroilerID,
-		&i.RainbowroosterID,
-		&i.BroilerID,
-		&i.LayersID,
-	)
-	return i, err
 }

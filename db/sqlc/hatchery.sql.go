@@ -10,23 +10,23 @@ import (
 
 const createHatchery = `-- name: CreateHatchery :one
 INSERT INTO hatchery (
-        infertile,
-        early,
-        middle,
-        late,
-        dead_chicks,
-        alive_chicks
+    infertile,
+    early,
+    middle,
+    late,
+    dead_chicks,
+    alive_chicks
 ) VALUES (
              $1, $2, $3, $4, $5, $6
-         ) RETURNING hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks, kuroiler_id, rainbowrooster_id, broiler_id, layers_id
+         ) RETURNING id, hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks
 `
 
 type CreateHatcheryParams struct {
-	Infertile   sql.NullInt32 `json:"infertile"`
-	Early       sql.NullInt32 `json:"early"`
-	Middle      sql.NullInt32 `json:"middle"`
-	Late        sql.NullInt32 `json:"late"`
-	DeadChicks  sql.NullInt32 `json:"deadChicks"`
+	Infertile   sql.NullInt64 `json:"infertile"`
+	Early       sql.NullInt64 `json:"early"`
+	Middle      sql.NullInt64 `json:"middle"`
+	Late        sql.NullInt64 `json:"late"`
+	DeadChicks  sql.NullInt64 `json:"deadChicks"`
 	AliveChicks sql.NullInt64 `json:"aliveChicks"`
 }
 
@@ -41,6 +41,7 @@ func (q *Queries) CreateHatchery(ctx context.Context, arg CreateHatcheryParams) 
 	)
 	var i Hatchery
 	err := row.Scan(
+		&i.ID,
 		&i.HatcheryID,
 		&i.CreatedAt,
 		&i.Infertile,
@@ -49,23 +50,20 @@ func (q *Queries) CreateHatchery(ctx context.Context, arg CreateHatcheryParams) 
 		&i.Late,
 		&i.DeadChicks,
 		&i.AliveChicks,
-		&i.KuroilerID,
-		&i.RainbowroosterID,
-		&i.BroilerID,
-		&i.LayersID,
 	)
 	return i, err
 }
 
 const getHatchery = `-- name: GetHatchery :one
-SELECT hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks, kuroiler_id, rainbowrooster_id, broiler_id, layers_id FROM hatchery
-WHERE hatchery_id = $1 LIMIT 1
+SELECT id, hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks FROM hatchery
+WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetHatchery(ctx context.Context, hatcheryID sql.NullInt64) (Hatchery, error) {
-	row := q.queryRow(ctx, q.getHatcheryStmt, getHatchery, hatcheryID)
+func (q *Queries) GetHatchery(ctx context.Context, id int64) (Hatchery, error) {
+	row := q.queryRow(ctx, q.getHatcheryStmt, getHatchery, id)
 	var i Hatchery
 	err := row.Scan(
+		&i.ID,
 		&i.HatcheryID,
 		&i.CreatedAt,
 		&i.Infertile,
@@ -74,28 +72,26 @@ func (q *Queries) GetHatchery(ctx context.Context, hatcheryID sql.NullInt64) (Ha
 		&i.Late,
 		&i.DeadChicks,
 		&i.AliveChicks,
-		&i.KuroilerID,
-		&i.RainbowroosterID,
-		&i.BroilerID,
-		&i.LayersID,
 	)
 	return i, err
 }
 
 const listHatchery = `-- name: ListHatchery :many
-SELECT hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks, kuroiler_id, rainbowrooster_id, broiler_id, layers_id FROM hatchery
-ORDER BY hatchery_id
-LIMIT $1
-    OFFSET $2
+SELECT id, hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks FROM hatchery
+WHERE hatchery_id = $1
+ORDER BY id
+LIMIT $2
+OFFSET $3
 `
 
 type ListHatcheryParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
+	HatcheryID int64 `json:"hatcheryID"`
+	Limit      int32 `json:"limit"`
+	Offset     int32 `json:"offset"`
 }
 
 func (q *Queries) ListHatchery(ctx context.Context, arg ListHatcheryParams) ([]Hatchery, error) {
-	rows, err := q.query(ctx, q.listHatcheryStmt, listHatchery, arg.Limit, arg.Offset)
+	rows, err := q.query(ctx, q.listHatcheryStmt, listHatchery, arg.HatcheryID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +100,7 @@ func (q *Queries) ListHatchery(ctx context.Context, arg ListHatcheryParams) ([]H
 	for rows.Next() {
 		var i Hatchery
 		if err := rows.Scan(
+			&i.ID,
 			&i.HatcheryID,
 			&i.CreatedAt,
 			&i.Infertile,
@@ -112,10 +109,6 @@ func (q *Queries) ListHatchery(ctx context.Context, arg ListHatcheryParams) ([]H
 			&i.Late,
 			&i.DeadChicks,
 			&i.AliveChicks,
-			&i.KuroilerID,
-			&i.RainbowroosterID,
-			&i.BroilerID,
-			&i.LayersID,
 		); err != nil {
 			return nil, err
 		}
@@ -128,54 +121,4 @@ func (q *Queries) ListHatchery(ctx context.Context, arg ListHatcheryParams) ([]H
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateHatchery = `-- name: UpdateHatchery :one
-UPDATE hatchery
-SET
-    infertile = $1,
-    early = $2,
-    middle = $3,
-    late = $4,
-    dead_chicks = $5,
-    alive_chicks = $6
-
-WHERE hatchery_id = $1
-RETURNING hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks, kuroiler_id, rainbowrooster_id, broiler_id, layers_id
-`
-
-type UpdateHatcheryParams struct {
-	Infertile   sql.NullInt32 `json:"infertile"`
-	Early       sql.NullInt32 `json:"early"`
-	Middle      sql.NullInt32 `json:"middle"`
-	Late        sql.NullInt32 `json:"late"`
-	DeadChicks  sql.NullInt32 `json:"deadChicks"`
-	AliveChicks sql.NullInt64 `json:"aliveChicks"`
-}
-
-func (q *Queries) UpdateHatchery(ctx context.Context, arg UpdateHatcheryParams) (Hatchery, error) {
-	row := q.queryRow(ctx, q.updateHatcheryStmt, updateHatchery,
-		arg.Infertile,
-		arg.Early,
-		arg.Middle,
-		arg.Late,
-		arg.DeadChicks,
-		arg.AliveChicks,
-	)
-	var i Hatchery
-	err := row.Scan(
-		&i.HatcheryID,
-		&i.CreatedAt,
-		&i.Infertile,
-		&i.Early,
-		&i.Middle,
-		&i.Late,
-		&i.DeadChicks,
-		&i.AliveChicks,
-		&i.KuroilerID,
-		&i.RainbowroosterID,
-		&i.BroilerID,
-		&i.LayersID,
-	)
-	return i, err
 }

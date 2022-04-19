@@ -7,67 +7,33 @@ import (
 	"time"
 )
 
-type Broiler struct {
-	ID        int32     `json:"id"`
-	Title     string    `json:"title"`
-	CreatedAt time.Time `json:"createdAt"`
-}
-
 type Hatchery struct {
-	HatcheryID       sql.NullInt64 `json:"hatcheryID"`
-	CreatedAt        time.Time     `json:"createdAt"`
-	Infertile        sql.NullInt32 `json:"infertile"`
-	Early            sql.NullInt32 `json:"early"`
-	Middle           sql.NullInt32 `json:"middle"`
-	Late             sql.NullInt32 `json:"late"`
-	DeadChicks       sql.NullInt32 `json:"deadChicks"`
-	AliveChicks      sql.NullInt64 `json:"aliveChicks"`
-	KuroilerID       sql.NullInt32 `json:"kuroilerID"`
-	RainbowroosterID sql.NullInt32 `json:"rainbowroosterID"`
-	BroilerID        sql.NullInt32 `json:"broilerID"`
-	LayersID         sql.NullInt32 `json:"layersID"`
+	ID          int64         `json:"id"`
+	HatcheryID  int64         `json:"hatcheryID"`
+	CreatedAt   time.Time     `json:"createdAt"`
+	Infertile   sql.NullInt64 `json:"infertile"`
+	Early       sql.NullInt64 `json:"early"`
+	Middle      sql.NullInt64 `json:"middle"`
+	Late        sql.NullInt64 `json:"late"`
+	DeadChicks  sql.NullInt64 `json:"deadChicks"`
+	AliveChicks sql.NullInt64 `json:"aliveChicks"`
 }
 
 type Kuroiler struct {
-	ID        int32     `json:"id"`
+	ID        int64     `json:"id"`
 	Title     string    `json:"title"`
+	House     string    `json:"house"`
 	CreatedAt time.Time `json:"createdAt"`
-}
-
-type Layer struct {
-	ID        int32     `json:"id"`
-	Title     string    `json:"title"`
-	CreatedAt time.Time `json:"createdAt"`
-}
-
-type Premise struct {
-	PremisesID       sql.NullInt64  `json:"premisesID"`
-	CreatedAt        time.Time      `json:"createdAt"`
-	Farm             sql.NullString `json:"farm"`
-	House            sql.NullString `json:"house"`
-	KuroilerID       sql.NullInt32  `json:"kuroilerID"`
-	RainbowroosterID sql.NullInt32  `json:"rainbowroosterID"`
-	BroilerID        sql.NullInt32  `json:"broilerID"`
-	LayersID         sql.NullInt32  `json:"layersID"`
 }
 
 type Production struct {
-	ProductionID     sql.NullInt64 `json:"productionID"`
-	CreatedAt        time.Time     `json:"createdAt"`
-	Eggs             sql.NullInt64 `json:"eggs"`
-	Dirty            sql.NullInt32 `json:"dirty"`
-	WrongShape       sql.NullInt32 `json:"wrongShape"`
-	WeakShell        sql.NullInt32 `json:"weakShell"`
-	Damaged          sql.NullInt32 `json:"damaged"`
-	HatchingEggs     sql.NullInt64 `json:"hatchingEggs"`
-	KuroilerID       sql.NullInt32 `json:"kuroilerID"`
-	RainbowroosterID sql.NullInt32 `json:"rainbowroosterID"`
-	BroilerID        sql.NullInt32 `json:"broilerID"`
-	LayersID         sql.NullInt32 `json:"layersID"`
-}
-
-type Rainbowrooster struct {
-	ID        int32     `json:"id"`
-	Title     string    `json:"title"`
-	CreatedAt time.Time `json:"createdAt"`
+	ID           int64         `json:"id"`
+	ProductionID int64         `json:"productionID"`
+	CreatedAt    time.Time     `json:"createdAt"`
+	Eggs         sql.NullInt64 `json:"eggs"`
+	Dirty        sql.NullInt64 `json:"dirty"`
+	WrongShape   sql.NullInt64 `json:"wrongShape"`
+	WeakShell    sql.NullInt64 `json:"weakShell"`
+	Damaged      sql.NullInt64 `json:"damaged"`
+	HatchingEggs sql.NullInt64 `json:"hatchingEggs"`
 }

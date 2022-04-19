@@ -22,41 +22,17 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
-	if q.createBroilerStmt, err = db.PrepareContext(ctx, createBroiler); err != nil {
-		return nil, fmt.Errorf("error preparing query CreateBroiler: %w", err)
-	}
 	if q.createHatcheryStmt, err = db.PrepareContext(ctx, createHatchery); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateHatchery: %w", err)
 	}
 	if q.createKuroilerStmt, err = db.PrepareContext(ctx, createKuroiler); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateKuroiler: %w", err)
 	}
-	if q.createLayersStmt, err = db.PrepareContext(ctx, createLayers); err != nil {
-		return nil, fmt.Errorf("error preparing query CreateLayers: %w", err)
-	}
-	if q.createPremisesStmt, err = db.PrepareContext(ctx, createPremises); err != nil {
-		return nil, fmt.Errorf("error preparing query CreatePremises: %w", err)
-	}
 	if q.createProductionStmt, err = db.PrepareContext(ctx, createProduction); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateProduction: %w", err)
 	}
-	if q.createRainbowRoosterStmt, err = db.PrepareContext(ctx, createRainbowRooster); err != nil {
-		return nil, fmt.Errorf("error preparing query CreateRainbowRooster: %w", err)
-	}
-	if q.deleteBroilerStmt, err = db.PrepareContext(ctx, deleteBroiler); err != nil {
-		return nil, fmt.Errorf("error preparing query DeleteBroiler: %w", err)
-	}
 	if q.deleteKuroilerStmt, err = db.PrepareContext(ctx, deleteKuroiler); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteKuroiler: %w", err)
-	}
-	if q.deleteLayersStmt, err = db.PrepareContext(ctx, deleteLayers); err != nil {
-		return nil, fmt.Errorf("error preparing query DeleteLayers: %w", err)
-	}
-	if q.deleteRainbowRoosterStmt, err = db.PrepareContext(ctx, deleteRainbowRooster); err != nil {
-		return nil, fmt.Errorf("error preparing query DeleteRainbowRooster: %w", err)
-	}
-	if q.getBroilerStmt, err = db.PrepareContext(ctx, getBroiler); err != nil {
-		return nil, fmt.Errorf("error preparing query GetBroiler: %w", err)
 	}
 	if q.getHatcheryStmt, err = db.PrepareContext(ctx, getHatchery); err != nil {
 		return nil, fmt.Errorf("error preparing query GetHatchery: %w", err)
@@ -64,20 +40,8 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getKuroilerStmt, err = db.PrepareContext(ctx, getKuroiler); err != nil {
 		return nil, fmt.Errorf("error preparing query GetKuroiler: %w", err)
 	}
-	if q.getLayersStmt, err = db.PrepareContext(ctx, getLayers); err != nil {
-		return nil, fmt.Errorf("error preparing query GetLayers: %w", err)
-	}
-	if q.getPremisesStmt, err = db.PrepareContext(ctx, getPremises); err != nil {
-		return nil, fmt.Errorf("error preparing query GetPremises: %w", err)
-	}
 	if q.getProductionStmt, err = db.PrepareContext(ctx, getProduction); err != nil {
 		return nil, fmt.Errorf("error preparing query GetProduction: %w", err)
-	}
-	if q.getRainbowRoosterStmt, err = db.PrepareContext(ctx, getRainbowRooster); err != nil {
-		return nil, fmt.Errorf("error preparing query GetRainbowRooster: %w", err)
-	}
-	if q.listBroilerStmt, err = db.PrepareContext(ctx, listBroiler); err != nil {
-		return nil, fmt.Errorf("error preparing query ListBroiler: %w", err)
 	}
 	if q.listHatcheryStmt, err = db.PrepareContext(ctx, listHatchery); err != nil {
 		return nil, fmt.Errorf("error preparing query ListHatchery: %w", err)
@@ -85,34 +49,17 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.listKuroilerStmt, err = db.PrepareContext(ctx, listKuroiler); err != nil {
 		return nil, fmt.Errorf("error preparing query ListKuroiler: %w", err)
 	}
-	if q.listLayersStmt, err = db.PrepareContext(ctx, listLayers); err != nil {
-		return nil, fmt.Errorf("error preparing query ListLayers: %w", err)
-	}
-	if q.listPremisesStmt, err = db.PrepareContext(ctx, listPremises); err != nil {
-		return nil, fmt.Errorf("error preparing query ListPremises: %w", err)
-	}
 	if q.listProductionStmt, err = db.PrepareContext(ctx, listProduction); err != nil {
 		return nil, fmt.Errorf("error preparing query ListProduction: %w", err)
 	}
-	if q.listRainbowRoosterStmt, err = db.PrepareContext(ctx, listRainbowRooster); err != nil {
-		return nil, fmt.Errorf("error preparing query ListRainbowRooster: %w", err)
-	}
-	if q.updateHatcheryStmt, err = db.PrepareContext(ctx, updateHatchery); err != nil {
-		return nil, fmt.Errorf("error preparing query UpdateHatchery: %w", err)
-	}
-	if q.updateProductionStmt, err = db.PrepareContext(ctx, updateProduction); err != nil {
-		return nil, fmt.Errorf("error preparing query UpdateProduction: %w", err)
+	if q.updateKuroilerStmt, err = db.PrepareContext(ctx, updateKuroiler); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateKuroiler: %w", err)
 	}
 	return &q, nil
 }
 
 func (q *Queries) Close() error {
 	var err error
-	if q.createBroilerStmt != nil {
-		if cerr := q.createBroilerStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing createBroilerStmt: %w", cerr)
-		}
-	}
 	if q.createHatcheryStmt != nil {
 		if cerr := q.createHatcheryStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createHatcheryStmt: %w", cerr)
@@ -123,49 +70,14 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing createKuroilerStmt: %w", cerr)
 		}
 	}
-	if q.createLayersStmt != nil {
-		if cerr := q.createLayersStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing createLayersStmt: %w", cerr)
-		}
-	}
-	if q.createPremisesStmt != nil {
-		if cerr := q.createPremisesStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing createPremisesStmt: %w", cerr)
-		}
-	}
 	if q.createProductionStmt != nil {
 		if cerr := q.createProductionStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createProductionStmt: %w", cerr)
 		}
 	}
-	if q.createRainbowRoosterStmt != nil {
-		if cerr := q.createRainbowRoosterStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing createRainbowRoosterStmt: %w", cerr)
-		}
-	}
-	if q.deleteBroilerStmt != nil {
-		if cerr := q.deleteBroilerStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing deleteBroilerStmt: %w", cerr)
-		}
-	}
 	if q.deleteKuroilerStmt != nil {
 		if cerr := q.deleteKuroilerStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteKuroilerStmt: %w", cerr)
-		}
-	}
-	if q.deleteLayersStmt != nil {
-		if cerr := q.deleteLayersStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing deleteLayersStmt: %w", cerr)
-		}
-	}
-	if q.deleteRainbowRoosterStmt != nil {
-		if cerr := q.deleteRainbowRoosterStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing deleteRainbowRoosterStmt: %w", cerr)
-		}
-	}
-	if q.getBroilerStmt != nil {
-		if cerr := q.getBroilerStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getBroilerStmt: %w", cerr)
 		}
 	}
 	if q.getHatcheryStmt != nil {
@@ -178,29 +90,9 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getKuroilerStmt: %w", cerr)
 		}
 	}
-	if q.getLayersStmt != nil {
-		if cerr := q.getLayersStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getLayersStmt: %w", cerr)
-		}
-	}
-	if q.getPremisesStmt != nil {
-		if cerr := q.getPremisesStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getPremisesStmt: %w", cerr)
-		}
-	}
 	if q.getProductionStmt != nil {
 		if cerr := q.getProductionStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getProductionStmt: %w", cerr)
-		}
-	}
-	if q.getRainbowRoosterStmt != nil {
-		if cerr := q.getRainbowRoosterStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getRainbowRoosterStmt: %w", cerr)
-		}
-	}
-	if q.listBroilerStmt != nil {
-		if cerr := q.listBroilerStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing listBroilerStmt: %w", cerr)
 		}
 	}
 	if q.listHatcheryStmt != nil {
@@ -213,34 +105,14 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing listKuroilerStmt: %w", cerr)
 		}
 	}
-	if q.listLayersStmt != nil {
-		if cerr := q.listLayersStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing listLayersStmt: %w", cerr)
-		}
-	}
-	if q.listPremisesStmt != nil {
-		if cerr := q.listPremisesStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing listPremisesStmt: %w", cerr)
-		}
-	}
 	if q.listProductionStmt != nil {
 		if cerr := q.listProductionStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing listProductionStmt: %w", cerr)
 		}
 	}
-	if q.listRainbowRoosterStmt != nil {
-		if cerr := q.listRainbowRoosterStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing listRainbowRoosterStmt: %w", cerr)
-		}
-	}
-	if q.updateHatcheryStmt != nil {
-		if cerr := q.updateHatcheryStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing updateHatcheryStmt: %w", cerr)
-		}
-	}
-	if q.updateProductionStmt != nil {
-		if cerr := q.updateProductionStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing updateProductionStmt: %w", cerr)
+	if q.updateKuroilerStmt != nil {
+		if cerr := q.updateKuroilerStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateKuroilerStmt: %w", cerr)
 		}
 	}
 	return err
@@ -280,67 +152,35 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                       DBTX
-	tx                       *sql.Tx
-	createBroilerStmt        *sql.Stmt
-	createHatcheryStmt       *sql.Stmt
-	createKuroilerStmt       *sql.Stmt
-	createLayersStmt         *sql.Stmt
-	createPremisesStmt       *sql.Stmt
-	createProductionStmt     *sql.Stmt
-	createRainbowRoosterStmt *sql.Stmt
-	deleteBroilerStmt        *sql.Stmt
-	deleteKuroilerStmt       *sql.Stmt
-	deleteLayersStmt         *sql.Stmt
-	deleteRainbowRoosterStmt *sql.Stmt
-	getBroilerStmt           *sql.Stmt
-	getHatcheryStmt          *sql.Stmt
-	getKuroilerStmt          *sql.Stmt
-	getLayersStmt            *sql.Stmt
-	getPremisesStmt          *sql.Stmt
-	getProductionStmt        *sql.Stmt
-	getRainbowRoosterStmt    *sql.Stmt
-	listBroilerStmt          *sql.Stmt
-	listHatcheryStmt         *sql.Stmt
-	listKuroilerStmt         *sql.Stmt
-	listLayersStmt           *sql.Stmt
-	listPremisesStmt         *sql.Stmt
-	listProductionStmt       *sql.Stmt
-	listRainbowRoosterStmt   *sql.Stmt
-	updateHatcheryStmt       *sql.Stmt
-	updateProductionStmt     *sql.Stmt
+	db                   DBTX
+	tx                   *sql.Tx
+	createHatcheryStmt   *sql.Stmt
+	createKuroilerStmt   *sql.Stmt
+	createProductionStmt *sql.Stmt
+	deleteKuroilerStmt   *sql.Stmt
+	getHatcheryStmt      *sql.Stmt
+	getKuroilerStmt      *sql.Stmt
+	getProductionStmt    *sql.Stmt
+	listHatcheryStmt     *sql.Stmt
+	listKuroilerStmt     *sql.Stmt
+	listProductionStmt   *sql.Stmt
+	updateKuroilerStmt   *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                       tx,
-		tx:                       tx,
-		createBroilerStmt:        q.createBroilerStmt,
-		createHatcheryStmt:       q.createHatcheryStmt,
-		createKuroilerStmt:       q.createKuroilerStmt,
-		createLayersStmt:         q.createLayersStmt,
-		createPremisesStmt:       q.createPremisesStmt,
-		createProductionStmt:     q.createProductionStmt,
-		createRainbowRoosterStmt: q.createRainbowRoosterStmt,
-		deleteBroilerStmt:        q.deleteBroilerStmt,
-		deleteKuroilerStmt:       q.deleteKuroilerStmt,
-		deleteLayersStmt:         q.deleteLayersStmt,
-		deleteRainbowRoosterStmt: q.deleteRainbowRoosterStmt,
-		getBroilerStmt:           q.getBroilerStmt,
-		getHatcheryStmt:          q.getHatcheryStmt,
-		getKuroilerStmt:          q.getKuroilerStmt,
-		getLayersStmt:            q.getLayersStmt,
-		getPremisesStmt:          q.getPremisesStmt,
-		getProductionStmt:        q.getProductionStmt,
-		getRainbowRoosterStmt:    q.getRainbowRoosterStmt,
-		listBroilerStmt:          q.listBroilerStmt,
-		listHatcheryStmt:         q.listHatcheryStmt,
-		listKuroilerStmt:         q.listKuroilerStmt,
-		listLayersStmt:           q.listLayersStmt,
-		listPremisesStmt:         q.listPremisesStmt,
-		listProductionStmt:       q.listProductionStmt,
-		listRainbowRoosterStmt:   q.listRainbowRoosterStmt,
-		updateHatcheryStmt:       q.updateHatcheryStmt,
-		updateProductionStmt:     q.updateProductionStmt,
+		db:                   tx,
+		tx:                   tx,
+		createHatcheryStmt:   q.createHatcheryStmt,
+		createKuroilerStmt:   q.createKuroilerStmt,
+		createProductionStmt: q.createProductionStmt,
+		deleteKuroilerStmt:   q.deleteKuroilerStmt,
+		getHatcheryStmt:      q.getHatcheryStmt,
+		getKuroilerStmt:      q.getKuroilerStmt,
+		getProductionStmt:    q.getProductionStmt,
+		listHatcheryStmt:     q.listHatcheryStmt,
+		listKuroilerStmt:     q.listKuroilerStmt,
+		listProductionStmt:   q.listProductionStmt,
+		updateKuroilerStmt:   q.updateKuroilerStmt,
 	}
 }

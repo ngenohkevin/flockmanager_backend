@@ -9,16 +9,27 @@ import (
 
 const createKuroiler = `-- name: CreateKuroiler :one
 INSERT INTO kuroiler (
-    title
+    title,
+    house
 ) VALUES (
-          $1
-) RETURNING id, title, created_at
+          $1, $2
+) RETURNING id, title, house, created_at
 `
 
-func (q *Queries) CreateKuroiler(ctx context.Context, title string) (Kuroiler, error) {
-	row := q.queryRow(ctx, q.createKuroilerStmt, createKuroiler, title)
+type CreateKuroilerParams struct {
+	Title string `json:"title"`
+	House string `json:"house"`
+}
+
+func (q *Queries) CreateKuroiler(ctx context.Context, arg CreateKuroilerParams) (Kuroiler, error) {
+	row := q.queryRow(ctx, q.createKuroilerStmt, createKuroiler, arg.Title, arg.House)
 	var i Kuroiler
-	err := row.Scan(&i.ID, &i.Title, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.House,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
@@ -27,25 +38,30 @@ DELETE FROM kuroiler
 WHERE id = $1
 `
 
-func (q *Queries) DeleteKuroiler(ctx context.Context, id int32) error {
+func (q *Queries) DeleteKuroiler(ctx context.Context, id int64) error {
 	_, err := q.exec(ctx, q.deleteKuroilerStmt, deleteKuroiler, id)
 	return err
 }
 
 const getKuroiler = `-- name: GetKuroiler :one
-SELECT id, title, created_at FROM kuroiler
+SELECT id, title, house, created_at FROM kuroiler
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetKuroiler(ctx context.Context, id int32) (Kuroiler, error) {
+func (q *Queries) GetKuroiler(ctx context.Context, id int64) (Kuroiler, error) {
 	row := q.queryRow(ctx, q.getKuroilerStmt, getKuroiler, id)
 	var i Kuroiler
-	err := row.Scan(&i.ID, &i.Title, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.House,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
 const listKuroiler = `-- name: ListKuroiler :many
-SELECT id, title, created_at FROM kuroiler
+SELECT id, title, house, created_at FROM kuroiler
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -65,7 +81,12 @@ func (q *Queries) ListKuroiler(ctx context.Context, arg ListKuroilerParams) ([]K
 	var items []Kuroiler
 	for rows.Next() {
 		var i Kuroiler
-		if err := rows.Scan(&i.ID, &i.Title, &i.CreatedAt); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.House,
+			&i.CreatedAt,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -77,4 +98,28 @@ func (q *Queries) ListKuroiler(ctx context.Context, arg ListKuroilerParams) ([]K
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateKuroiler = `-- name: UpdateKuroiler :one
+UPDATE kuroiler
+SET house = $2
+WHERE id = $1
+RETURNING id, title, house, created_at
+`
+
+type UpdateKuroilerParams struct {
+	ID    int64  `json:"id"`
+	House string `json:"house"`
+}
+
+func (q *Queries) UpdateKuroiler(ctx context.Context, arg UpdateKuroilerParams) (Kuroiler, error) {
+	row := q.queryRow(ctx, q.updateKuroilerStmt, updateKuroiler, arg.ID, arg.House)
+	var i Kuroiler
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.House,
+		&i.CreatedAt,
+	)
+	return i, err
 }

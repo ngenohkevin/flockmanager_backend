@@ -29,21 +29,25 @@ func RandomString(n int) string {
 func RandomTitle() string {
 	return RandomString(3)
 }
-func RandomEggs() int32 {
-	return RandomInt(5, 10)
+func RandomHouse() string {
+	return RandomString(3)
 }
-func RandomDirty() int32 {
-	return RandomInt(3, 5)
-}
-func RandomWrongShape() int32 {
-	return RandomInt(3, 5)
-}
-func RandomWeakShell() int32 {
-	return RandomInt(3, 5)
-}
-func RandomDamaged() int32 {
-	return RandomInt(3, 5)
-}
-func RandomHatchingEggs() int32 {
-	return RandomInt(5, 8)
-}
+
+//func RandomEggs() int32 {
+//	return RandomInt(5, 10)
+//}
+//func RandomDirty() int32 {
+//	return RandomInt(3, 5)
+//}
+//func RandomWrongShape() int32 {
+//	return RandomInt(3, 5)
+//}
+//func RandomWeakShell() int32 {
+//	return RandomInt(3, 5)
+//}
+//func RandomDamaged() int32 {
+//	return RandomInt(3, 5)
+//}
+//func RandomHatchingEggs() int32 {
+//	return RandomInt(5, 8)
+//}

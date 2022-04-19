@@ -10,7 +10,7 @@ import (
 
 const (
 	dbDriver = "postgres"
-	dbSource = "postgresql://root:dylstar20@localhost:5432/kukuchic_db?sslmode=disable"
+	dbSource = "postgresql://root:dylstar20@localhost:5432/flocks_db?sslmode=disable"
 )
 
 var testQueries *Queries
