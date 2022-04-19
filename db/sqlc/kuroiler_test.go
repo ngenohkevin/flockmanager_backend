@@ -27,9 +27,9 @@ func CreateRandomKuroiler(t *testing.T) Kuroiler {
 	return kuroiler
 }
 
-func TestCreateKuroiler(t *testing.T) {
-	CreateRandomKuroiler(t)
-}
+//func TestCreateKuroiler(t *testing.T) {
+//	CreateRandomKuroiler(t)
+//}
 
 func TestGetKuroiler(t *testing.T) {
 	kuroiler1 := CreateRandomKuroiler(t)
