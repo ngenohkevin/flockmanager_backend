@@ -1,5 +1,6 @@
 -- name: CreateHatchery :one
 INSERT INTO hatchery (
+    hatchery_id,
     infertile,
     early,
     middle,
@@ -7,7 +8,7 @@ INSERT INTO hatchery (
     dead_chicks,
     alive_chicks
 ) VALUES (
-             $1, $2, $3, $4, $5, $6
+             $1, $2, $3, $4, $5, $6, $7
          ) RETURNING *;
 
 -- name: GetHatchery :one

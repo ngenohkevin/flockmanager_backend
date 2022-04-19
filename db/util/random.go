@@ -1,6 +1,7 @@
 package util
 
 import (
+	"database/sql"
 	"math/rand"
 	"strings"
 	"time"
@@ -12,8 +13,8 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func RandomInt(min, max int32) int32 {
-	return min + rand.Int31n(max-min+1)
+func RandomInt(min, max int64) int64 {
+	return min + rand.Int63n(max-min+1)
 }
 
 func RandomString(n int) string {
@@ -27,27 +28,15 @@ func RandomString(n int) string {
 }
 
 func RandomTitle() string {
-	return RandomString(3)
+	return RandomString(4)
 }
 func RandomHouse() string {
-	return RandomString(3)
+	return RandomString(5)
 }
 
-//func RandomEggs() int32 {
-//	return RandomInt(5, 10)
-//}
-//func RandomDirty() int32 {
-//	return RandomInt(3, 5)
-//}
-//func RandomWrongShape() int32 {
-//	return RandomInt(3, 5)
-//}
-//func RandomWeakShell() int32 {
-//	return RandomInt(3, 5)
-//}
-//func RandomDamaged() int32 {
-//	return RandomInt(3, 5)
-//}
-//func RandomHatchingEggs() int32 {
-//	return RandomInt(5, 8)
-//}
+func RandomNums() sql.NullInt64 {
+	return sql.NullInt64{
+		Int64: RandomInt(10, 2000),
+		Valid: true,
+	}
+}

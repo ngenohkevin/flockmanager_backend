@@ -10,6 +10,7 @@ import (
 
 const createHatchery = `-- name: CreateHatchery :one
 INSERT INTO hatchery (
+    hatchery_id,
     infertile,
     early,
     middle,
@@ -17,11 +18,12 @@ INSERT INTO hatchery (
     dead_chicks,
     alive_chicks
 ) VALUES (
-             $1, $2, $3, $4, $5, $6
+             $1, $2, $3, $4, $5, $6, $7
          ) RETURNING id, hatchery_id, created_at, infertile, early, middle, late, dead_chicks, alive_chicks
 `
 
 type CreateHatcheryParams struct {
+	HatcheryID  int64         `json:"hatcheryID"`
 	Infertile   sql.NullInt64 `json:"infertile"`
 	Early       sql.NullInt64 `json:"early"`
 	Middle      sql.NullInt64 `json:"middle"`
@@ -32,6 +34,7 @@ type CreateHatcheryParams struct {
 
 func (q *Queries) CreateHatchery(ctx context.Context, arg CreateHatcheryParams) (Hatchery, error) {
 	row := q.queryRow(ctx, q.createHatcheryStmt, createHatchery,
+		arg.HatcheryID,
 		arg.Infertile,
 		arg.Early,
 		arg.Middle,

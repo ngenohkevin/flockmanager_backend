@@ -10,6 +10,7 @@ import (
 
 const createProduction = `-- name: CreateProduction :one
 INSERT INTO production (
+    production_id,
     eggs,
     dirty,
     wrong_shape,
@@ -17,11 +18,12 @@ INSERT INTO production (
     damaged,
     hatching_eggs
 ) VALUES (
-             $1, $2, $3, $4, $5, $6
+             $1, $2, $3, $4, $5, $6, $7
          ) RETURNING id, production_id, created_at, eggs, dirty, wrong_shape, weak_shell, damaged, hatching_eggs
 `
 
 type CreateProductionParams struct {
+	ProductionID int64         `json:"productionID"`
 	Eggs         sql.NullInt64 `json:"eggs"`
 	Dirty        sql.NullInt64 `json:"dirty"`
 	WrongShape   sql.NullInt64 `json:"wrongShape"`
@@ -32,6 +34,7 @@ type CreateProductionParams struct {
 
 func (q *Queries) CreateProduction(ctx context.Context, arg CreateProductionParams) (Production, error) {
 	row := q.queryRow(ctx, q.createProductionStmt, createProduction,
+		arg.ProductionID,
 		arg.Eggs,
 		arg.Dirty,
 		arg.WrongShape,

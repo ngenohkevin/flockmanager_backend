@@ -1,5 +1,6 @@
 -- name: CreateProduction :one
 INSERT INTO production (
+    production_id,
     eggs,
     dirty,
     wrong_shape,
@@ -7,7 +8,7 @@ INSERT INTO production (
     damaged,
     hatching_eggs
 ) VALUES (
-             $1, $2, $3, $4, $5, $6
+             $1, $2, $3, $4, $5, $6, $7
          ) RETURNING *;
 
 -- name: GetProduction :one
